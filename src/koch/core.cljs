@@ -110,16 +110,23 @@
       (let [depth (:fractal-depth app)]
         (dom/div nil
           (dom/h2 nil "Koch Fractals")
+          (dom/p nil
+            (dom/a #js {:href "http://en.wikipedia.org/wiki/Koch_snowflake"} "Koch Snowflakes")
+            (dom/span nil " were one of the earliest fractals ever described. Make your own snowflake by clicking around below, and changing the number of recursions. ")
+            (dom/a #js {:href "https://github.com/argonauthills/koch"} "View Source on Github"))
+
           (om/build segments-input (:segments app))
+
           (dom/p nil
-            (dom/button #js {:onClick #(handle-clear app owner)} "Clear Segments"))
-          ; (dom/p nil (om/build segments-debug (:segments app)))
-          (dom/p nil
-            (dom/button #js {:onClick #(handle-depth app (- 1))} "-")
+            (dom/button #js {:onClick #(handle-clear app owner)} "Clear Segments")
+
             (dom/span nil (str " Depth: " depth " "))
             (dom/button #js {:onClick #(handle-depth app 1)} "+")
+            (dom/button #js {:onClick #(handle-depth app (- 1))} "-"))
+
+
           (dom/p nil
-            (om/build fractal-output app))))))))
+            (om/build fractal-output app)))))))
 
 (om/root main-view app-state
   {:target (. js/document (getElementById "app"))})
