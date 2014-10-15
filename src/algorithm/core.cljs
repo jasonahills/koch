@@ -64,16 +64,20 @@
 
 (defn segmentLength
     [ [[x1 y1] [x2 y2]] ]
-    (let [rise (- y1 y2)
-          run (- x1 x2)]
+    (let [rise (- y2 y1)
+          run (- x2 x1)]
         (Math/sqrt (+ (* rise rise) (* run run)))))
 
 (defn segmentAngle
     "angle from x-axis"
     [ [[x1 y1] [x2 y2]] ]
-    (let [opp (- y1 y2)
-          adj (- x1 x2)]
-        (Math/atan (/ opp adj))))
+    (let [opp (- y2 y1)
+          adj (- x2 x1)
+          arcAngle (Math/atan (/ opp adj))]
+
+        (if (< adj 0) 
+          (+ 3.141592 arcAngle)
+          arcAngle)))
         ; can't currently handle vertical lines; TODO: fix this.
         ; (if (= adj 0)
         ;   (opp(/ Math/PI 2)
