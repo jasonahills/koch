@@ -2,6 +2,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
+            [goog.style :as style]
             [cljs.core.async :refer [put! chan <!]]
             [clojure.data :as data]
             [clojure.string :as string]
@@ -32,6 +33,11 @@
 
 ; (swap! app-state assoc :text "Do it live!")
 ; (swap! app-state assoc :text "Multiple roots!")
+
+(def xmin 0)
+(def xmax 1)
+(def ymin (- 0.5))
+(def ymax 0.5)
 
 (def app-state
   (atom
@@ -87,14 +93,30 @@
 
 (defn point-debug [[x y]] (str "x: " x "\ty: " y "\n"))
 
+(defn offset-in-element [e node]
+  (let [offset (style/getPageOffset node)
+        x-px (- e.pageX (.-x offset))
+        y-px (- e.pageY (.-y offset))]
+    [x-px y-px]))
+
+(defn offset-percent [[x y] node]
+  (let [size (style/getSize node)
+        xpt (/ x (.-width size))
+        ypt (/ y (.-height size))]
+    [xpt ypt]))
+
+(defn scale-to [n min max]
+  (let [size (- max min)]
+    (+ min (* size n))))
+
 (defn handle-segment-click [e segments owner]
   ;; change so it uses the width/height of the component?
-  (let [node (om/get-node owner "segments")]
-    (.log js/console "Event" e.clientX e.clientY)
-    (.log js/console "Test" )
-    (om/transact! segments #(conj % [0.3 -0.5]))))
-
-
+  (let [node (om/get-node owner "segments")
+        offset (offset-in-element e node)
+        [xpct ypct] (offset-percent offset node)
+        x (scale-to xpct xmin xmax)
+        y (scale-to ypct (- ymin) (- ymax))]
+    (om/transact! segments #(conj % [x y]))))
 
 ;; renders a series of segments and adds new ones to a provided channel?
 ;; or should it directly add to its cursor?
