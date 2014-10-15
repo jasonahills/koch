@@ -35,7 +35,7 @@
 (def app-state
   (atom
     {:input-size [20 10]
-     :segments [[0 0] [10 2] [-3 14] [100 100] [80 80]]
+     :segments [[0 0] [0.3 0.24] [0.8 -0.3] [1 0]]
      :message "hello"}))
 
 ; (defn contact-view [contact owner]
@@ -82,21 +82,46 @@
 
 (defn input-point-circle
   [[x y]]
-  (dom/circle #js {:cx x :cy y :r 4 :stroke "black" :strokeWidth 1 :fill "red"}))
+  (dom/circle #js {:cx x :cy (- y) :r 0.03 :fill "red"}))
 
+(defn point-debug [[x y]] (str "x: " x "\ty: " y "\n"))
+
+(defn handle-segment-click [e segments owner]
+  ;; change so it uses the width/height of the component?
+  (.log js/console "Event" e.clientX e.clientY)
+  (.log js/console "Test" (om/get-node owner "segments"))
+  (om/transact! segments #(conj % [0.3 -0.5])))
+
+;; renders a series of segments and adds new ones to a provided channel?
+;; or should it directly add to its cursor?
+;; two-way data binding :) why not?
+;; it'll just edit itself
 (defn segments-input [segments owner]
   (reify
     om/IRenderState
     (render-state [this state]
-      (dom/svg #js {:className "segments"}
-        (apply dom/g nil 
+      (dom/svg #js {:className "segments"
+                    :viewBox "0 -0.5 1 1"
+                    :ref "segments"
+                    :onClick #(handle-segment-click % segments owner)}
+        (apply dom/g nil
           (map input-point-circle segments))))))
+
+(defn segments-debug [segments owner]
+  (reify
+    om/IRender
+    (render [this]
+      (apply dom/pre nil
+        (map point-debug segments)))))
 
 (defn fractal-output [app owner]
   (reify
     om/IRenderState
     (render-state [this state]
       (dom/svg #js {:className "output"} (input-point-circle [100 300])))))
+
+(defn handle-clear [app owner]
+  (om/update! app :segments [[0 0]]))
 
 (defn main-view [app owner]
   (reify
@@ -106,7 +131,9 @@
         (dom/h2 nil "Koch Fractals")
         (dom/p nil "So beautiful!")
         (om/build segments-input (:segments app))
-        (dom/p nil (dom/button nil "Clear Segments"))
+        (dom/p nil
+          (dom/button #js {:onClick #(handle-clear app owner)} "Clear Segments"))
+        (dom/p nil (om/build segments-debug (:segments app)))
         (dom/p nil
           (dom/button nil "+")
           (dom/span nil " # Fractals ")
