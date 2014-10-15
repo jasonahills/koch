@@ -175,7 +175,6 @@
       (let [depth (:fractal-depth app)]
         (dom/div nil
           (dom/h2 nil "Koch Fractals")
-          (dom/p nil "So beautiful!")
           (om/build segments-input (:segments app))
           (dom/p nil
             (dom/button #js {:onClick #(handle-clear app owner)} "Clear Segments"))
