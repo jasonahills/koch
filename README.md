@@ -8,7 +8,7 @@ This project allows you to specify an arbitrary shape and see what the fractal p
 Live Demo
 ---------
 
-[Click here for a demo]()
+[Click here for a demo](http://argonauthills.github.io/koch/)
 
 Technology
 ----------
