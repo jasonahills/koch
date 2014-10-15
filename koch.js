@@ -13,4 +13,4 @@ goog.addDependency("../koch/algorithm/core.js", ['koch.algorithm.core'], ['cljs.
 goog.addDependency("../clojure/string.js", ['clojure.string'], ['goog.string', 'cljs.core', 'goog.string.StringBuffer']);
 goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);
 goog.addDependency("../clojure/data.js", ['clojure.data'], ['cljs.core', 'clojure.set']);
-goog.addDependency("../koch/core.js", ['koch.core'], ['cljs.core', 'om.dom', 'cljs.core.async', 'om.core', 'koch.algorithm.core', 'clojure.string', 'clojure.data']);
+goog.addDependency("../koch/core.js", ['koch.core'], ['cljs.core', 'om.dom', 'cljs.core.async', 'om.core', 'koch.algorithm.core', 'goog.style', 'clojure.string', 'clojure.data']);
