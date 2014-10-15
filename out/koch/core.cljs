@@ -17,8 +17,8 @@
 
 (def app-state
   (atom
-    {:fractal-depth 1
-     :segments [[0 0] [0.2 0] [0.3 0.24] [0.5 0]]
+    {:fractal-depth 2
+     :segments [[0 0] [(/ 1 3) 0] [(/ 1 2) (/ 1.732 6)] [(/ 2 3) 0]]
      :message "hello"}))
 
 (defn point-debug [[x y]] (str "x: " x "\ty: " y "\n"))
