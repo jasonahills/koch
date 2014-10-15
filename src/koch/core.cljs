@@ -42,7 +42,7 @@
 (def app-state
   (atom
     {:input-size [20 10]
-     :segments [[0 0] [0.3 0.24] [0.8 -0.3] [1 0]]
+     :segments [[0 0] [0.3 0.24]]
      :message "hello"}))
 
 ; (defn contact-view [contact owner]
@@ -86,11 +86,6 @@
 ;                  :onChange #(handle-change % owner state)})
 ;           (dom/button #js {:onClick #(add-contact app owner)} "Add contact"))))))
 
-
-(defn input-point-circle
-  [[x y]]
-  (dom/circle #js {:cx x :cy (- y) :r 0.03 :fill "red"}))
-
 (defn point-debug [[x y]] (str "x: " x "\ty: " y "\n"))
 
 (defn offset-in-element [e node]
@@ -115,8 +110,24 @@
         offset (offset-in-element e node)
         [xpct ypct] (offset-percent offset node)
         x (scale-to xpct xmin xmax)
-        y (scale-to ypct (- ymin) (- ymax))]
+        y (scale-to ypct (- ymin) (- ymax))] ;; flip y
     (om/transact! segments #(conj % [x y]))))
+
+(defn point-data [[x y]]
+  (str x " " (- y)))
+
+(defn input-point-circle
+  [[x y]]
+  (dom/circle #js {:cx x :cy (- y) :r 0.02 :fill "black"}))
+
+(defn segments-path-data [segments]
+  (str "M" (string/join "L" (map point-data segments))))
+
+(defn segments-path [segments]
+  (println (point-data [1 2]))
+  (dom/path #js {:d (segments-path-data segments), :stroke "red", :strokeWidth 0.01, :fill "none"}))
+
+
 
 ;; renders a series of segments and adds new ones to a provided channel?
 ;; or should it directly add to its cursor?
@@ -126,12 +137,14 @@
   (reify
     om/IRenderState
     (render-state [this state]
-      (dom/svg #js {:className "segments"
-                    :viewBox "0 -0.5 1 1"
-                    :ref "segments"
-                    :onClick #(handle-segment-click % segments owner)}
-        (apply dom/g nil
-          (map input-point-circle segments))))))
+      (let [closed-segments (conj segments [1 0])]
+        (dom/svg #js {:className "segments"
+                      :viewBox "0 -0.5 1 1"
+                      :ref "segments"
+                      :onClick #(handle-segment-click % segments owner)}
+          (segments-path closed-segments)
+          (apply dom/g nil
+            (map input-point-circle closed-segments)))))))
 
 (defn segments-debug [segments owner]
   (reify
