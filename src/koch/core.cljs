@@ -89,9 +89,12 @@
 
 (defn handle-segment-click [e segments owner]
   ;; change so it uses the width/height of the component?
-  (.log js/console "Event" e.clientX e.clientY)
-  (.log js/console "Test" (om/get-node owner "segments"))
-  (om/transact! segments #(conj % [0.3 -0.5])))
+  (let [node (om/get-node owner "segments")]
+    (.log js/console "Event" e.clientX e.clientY)
+    (.log js/console "Test" )
+    (om/transact! segments #(conj % [0.3 -0.5]))))
+
+
 
 ;; renders a series of segments and adds new ones to a provided channel?
 ;; or should it directly add to its cursor?
