@@ -32,7 +32,6 @@
         col0 (columnAsVector matrix2 0)
         col1 (columnAsVector matrix2 1)
         col2 (columnAsVector matrix2 2)]
-        (println "all the rows" row0 row1 row2 col0 col1 col2)
       [[(dotProd row0 col0) (dotProd row0 col1) (dotProd row0 col2)]
        [(dotProd row1 col0) (dotProd row1 col1) (dotProd row1 col2)]
        [(dotProd row2 col0) (dotProd row2 col1) (dotProd row2 col2)]]))
@@ -63,7 +62,8 @@
     [matrix point]
     (vectorToPoint (applyMatrixToVector matrix (pointToVector point))))
 
-
+(println "am2v" (applyMatrixToVector testMatrix1 [2 1 1]))
+(println (vectorToPoint (pointToVector [1 1])))
 
 ; point [x y]
 ; curve [point point point ... point]
@@ -148,6 +148,8 @@
 
 ; ALGORITHM
 
+(def testCurve [[0 0] [1 0] [2 1] [3 0] [4 0]])
+
 (defn segmentsFromCurve
     "curve -> [segment ... segment]"
     [curve]
@@ -159,28 +161,49 @@
 ; (defn transformModelToSegment
 ;     [curve segment])
 
-(def testTransform (segmentToSegmentTransformMatrix testSeg1 testSeg2))
+; (def testTransform (segmentToSegmentTransformMatrix testSeg1 testSeg2))
 
-(println "s2sTransformMatrix" (segmentToSegmentTransformMatrix testSeg1 testSeg2))
-(println "testTransPoint" (applyMatrixToPoint testTransform [1 1]))
+; (println "s2sTransformMatrix" (segmentToSegmentTransformMatrix testSeg1 testSeg2))
+; (println "testTransPoint" (applyMatrixToPoint testTransform [1 1]))
 
+(println "segFromCurve" (segmentsFromCurve testCurve))
 
-
-
-
-
-
-
-
-
-
-
-
-(defn curveOntoSegmentMatrix
+(defn curveOntoSegment
+    "transforms a curve so its endpoints fit to a segment"
     [ curve segment ]
-    (let [curveInit (first curve)
-          curveLast (last curve)]
-          ))
+    (let [curveSeg [(first curve) (last curve)]
+          transMatrix (segmentToSegmentTransformMatrix curveSeg segment)]
+        (println curveSeg "transMatrix" transMatrix)
+        (map #(applyMatrixToPoint transMatrix %) curve)))
 
-; points [[0 0] [1 1] [2 0] [3 0]]
-; segment [[0 0] [1 2]]
+(println "testCurveOnSeg" (curveOntoSegment testCurve [[0 0] [0 4]]))
+(println "testCurveOnSeg" (curveOntoSegment testCurve [[1 1] [2 2]]))
+(println "testCurveOnSeg" (curveOntoSegment testCurve [[0 0] [0 (- 0 4)]]))
+
+
+(defn nextFractal
+    [curve level1curve]
+    (let [segments (segmentsFromCurve curve)
+          firstPoint (first curve)
+          fractals (map #(curveOntoSegment level1curve %) segments)
+          headlessFractals (map rest fractals)
+          restPoints (reduce concat headlessFractals)]
+          (println "fractals" fractals)
+          (println "headlesss fractals" headlessFractals)
+          (cons firstPoint restPoints)))
+
+(println "nextFractal" (nextFractal testCurve testCurve))
+
+(defn fractalizeMe
+  [curve level]
+  (let [originalCurve curve]
+    (loop [curve curve level level]
+      (if (= level 0) 
+        curve
+        (recur (nextFractal curve originalCurve) (- level 1))))))
+
+
+(println "fractalizeMe" (fractalizeMe testCurve 2))
+
+
+
