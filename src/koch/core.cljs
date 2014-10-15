@@ -41,7 +41,7 @@
 
 (def app-state
   (atom
-    {:input-size [20 10]
+    {:fractal-depth 4
      :segments [[0 0] [0.3 0.24]]
      :message "hello"}))
 
@@ -123,9 +123,8 @@
 (defn segments-path-data [segments]
   (str "M" (string/join "L" (map point-data segments))))
 
-(defn segments-path [segments]
-  (println (point-data [1 2]))
-  (dom/path #js {:d (segments-path-data segments), :stroke "red", :strokeWidth 0.01, :fill "none"}))
+(defn segments-path [segments color width]
+  (dom/path #js {:d (segments-path-data segments), :stroke color, :strokeWidth width, :fill "none"}))
 
 
 
@@ -142,7 +141,7 @@
                       :viewBox "0 -0.5 1 1"
                       :ref "segments"
                       :onClick #(handle-segment-click % segments owner)}
-          (segments-path closed-segments)
+          (segments-path closed-segments "red" 0.01)
           (apply dom/g nil
             (map input-point-circle closed-segments)))))))
 
@@ -153,32 +152,40 @@
       (apply dom/pre nil
         (map point-debug segments)))))
 
-(defn fractal-output [app owner]
+(defn fractal-output [segments owner]
   (reify
     om/IRenderState
     (render-state [this state]
-      (dom/svg #js {:className "output"} (input-point-circle [100 300])))))
+      (dom/svg #js {:className "output"
+                    :viewBox "0 -0.5 1 1"
+                    :ref "output"}
+        (segments-path segments "black" 0.005)))))
 
 (defn handle-clear [app owner]
   (om/update! app :segments [[0 0]]))
+
+(defn handle-depth [app n]
+  (.log js/console "Hello" n)
+  (om/transact! app :fractal-depth #(max 0 (+ % n))))
 
 (defn main-view [app owner]
   (reify
     om/IRender
     (render [this]
-      (dom/div nil
-        (dom/h2 nil "Koch Fractals")
-        (dom/p nil "So beautiful!")
-        (om/build segments-input (:segments app))
-        (dom/p nil
-          (dom/button #js {:onClick #(handle-clear app owner)} "Clear Segments"))
-        (dom/p nil (om/build segments-debug (:segments app)))
-        (dom/p nil
-          (dom/button nil "+")
-          (dom/span nil " # Fractals ")
-          (dom/button nil "-")
-        (dom/p nil
-          (om/build fractal-output nil)))))))
+      (let [depth (:fractal-depth app)]
+        (dom/div nil
+          (dom/h2 nil "Koch Fractals")
+          (dom/p nil "So beautiful!")
+          (om/build segments-input (:segments app))
+          (dom/p nil
+            (dom/button #js {:onClick #(handle-clear app owner)} "Clear Segments"))
+          ; (dom/p nil (om/build segments-debug (:segments app)))
+          (dom/p nil
+            (dom/button #js {:onClick #(handle-depth app (- 1))} "-")
+            (dom/span nil (str " Depth: " depth " "))
+            (dom/button #js {:onClick #(handle-depth app 1)} "+")
+          (dom/p nil
+            (om/build fractal-output (:segments app)))))))))
 
 (om/root main-view app-state
   {:target (. js/document (getElementById "app"))})
