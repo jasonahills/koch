@@ -140,10 +140,10 @@
     (let [scale (requiredScale segment1 segment2)
           angle (requiredAngle segment1 segment2)]
         (reduce mult3x3
-          [(transToOriginMatrix (first segment1))
+           (reverse [(transToOriginMatrix (first segment1))
            (rotationMatrix angle)
            (scaleMatrix scale)
-           (translationMatrix (first segment2))])))
+           (translationMatrix (first segment2))]))))
 
 
 ; ALGORITHM
