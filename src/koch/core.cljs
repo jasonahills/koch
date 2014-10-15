@@ -42,7 +42,7 @@
 (def app-state
   (atom
     {:fractal-depth 4
-     :segments [[0 0] [0.3 0.24]]
+     :segments [[0 0] [0.2 0] [0.3 0.24] [0.5 0]]
      :message "hello"}))
 
 ; (defn contact-view [contact owner]
@@ -152,14 +152,18 @@
       (apply dom/pre nil
         (map point-debug segments)))))
 
-(defn fractal-output [segments owner]
+
+
+(defn fractal-output [app owner]
   (reify
     om/IRenderState
     (render-state [this state]
-      (dom/svg #js {:className "output"
-                    :viewBox "0 -0.5 1 1"
-                    :ref "output"}
-        (segments-path segments "black" 0.005)))))
+      (let [fractal-segments (conj (:segments app) [1 0])]
+        (dom/svg #js {:className "output"
+                      :viewBox "0 -0.5 1 1"
+                      :ref "output"}
+          (segments-path fractal-segments "black" 0.005))))))
+
 
 (defn handle-clear [app owner]
   (om/update! app :segments [[0 0]]))
@@ -184,7 +188,7 @@
             (dom/span nil (str " Depth: " depth " "))
             (dom/button #js {:onClick #(handle-depth app 1)} "+")
           (dom/p nil
-            (om/build fractal-output (:segments app)))))))))
+            (om/build fractal-output app))))))))
 
 (om/root main-view app-state
   {:target (. js/document (getElementById "app"))})
