@@ -41,7 +41,7 @@
 
 (def app-state
   (atom
-    {:fractal-depth 4
+    {:fractal-depth 1
      :segments [[0 0] [0.2 0] [0.3 0.24] [0.5 0]]
      :message "hello"}))
 
@@ -152,13 +152,14 @@
       (apply dom/pre nil
         (map point-debug segments)))))
 
-
+(defn segments-to-fractal [segments n]
+  (alg/fractalizeMe (conj segments [1 0]) n))
 
 (defn fractal-output [app owner]
   (reify
     om/IRenderState
     (render-state [this state]
-      (let [fractal-segments (conj (:segments app) [1 0])]
+      (let [fractal-segments (segments-to-fractal (:segments app) (:fractal-depth app))]
         (dom/svg #js {:className "output"
                       :viewBox "0 -0.5 1 1"
                       :ref "output"}

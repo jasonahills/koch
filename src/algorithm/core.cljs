@@ -5,7 +5,7 @@
 
 ; MATH LIBRARY
 
-; (defn sign 
+; (defn sign
 ;   [number]
 ;   (/ (numberMath.abs number))
 ; )
@@ -139,7 +139,7 @@
     [segment1 segment2]
     (let [scale (requiredScale segment1 segment2)
           angle (requiredAngle segment1 segment2)]
-        (reduce mult3x3 
+        (reduce mult3x3
           [(transToOriginMatrix (first segment1))
            (rotationMatrix angle)
            (scaleMatrix scale)
@@ -198,12 +198,9 @@
   [curve level]
   (let [originalCurve curve]
     (loop [curve curve level level]
-      (if (= level 0) 
+      (if (= level 1) 
         curve
         (recur (nextFractal curve originalCurve) (- level 1))))))
 
 
 (println "fractalizeMe" (fractalizeMe testCurve 2))
-
-
-
