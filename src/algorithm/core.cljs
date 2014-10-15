@@ -1,14 +1,7 @@
 (ns koch.algorithm.core)
 
 
-(enable-console-print!)
-
-; MATH LIBRARY
-
-; (defn sign
-;   [number]
-;   (/ (numberMath.abs number))
-; )
+; (enable-console-print!)
 
 ; MATRIX LIBRARY
 (def testMatrix1 [[1 2 3] [4 5 6] [7 8 9]])
@@ -36,8 +29,6 @@
        [(dotProd row1 col0) (dotProd row1 col1) (dotProd row1 col2)]
        [(dotProd row2 col0) (dotProd row2 col1) (dotProd row2 col2)]]))
 
-(println "mult3x3" (mult3x3 testMatrix1 identityMatrix))
-
 (defn pointToVector
     "adds a z-value to points"
     [[x y]]
@@ -55,15 +46,11 @@
           row2 (get matrix 2)]
       [(dotProd row0 vect) (dotProd row1 vect) (dotProd row2 vect)]))
 
-(println "am2v" (applyMatrixToVector testMatrix1 [2 1 1]))
-(println (vectorToPoint (pointToVector [1 1])))
 
 (defn applyMatrixToPoint
     [matrix point]
     (vectorToPoint (applyMatrixToVector matrix (pointToVector point))))
 
-(println "am2v" (applyMatrixToVector testMatrix1 [2 1 1]))
-(println (vectorToPoint (pointToVector [1 1])))
 
 ; point [x y]
 ; curve [point point point ... point]
@@ -101,9 +88,6 @@
     "angle to fit first segment on second"
     [segment1 segment2]
     (- (segmentAngle segment2) (segmentAngle segment1)))
-
-(println "segAng" (segmentAngle testSeg1) (segmentAngle testSeg2))
-
 
 
 ; MATRICES
@@ -148,8 +132,6 @@
 
 ; ALGORITHM
 
-(def testCurve [[0 0] [1 0] [2 1] [3 0] [4 0]])
-
 (defn segmentsFromCurve
     "curve -> [segment ... segment]"
     [curve]
@@ -158,27 +140,13 @@
         curve
         (rest curve)))
 
-; (defn transformModelToSegment
-;     [curve segment])
-
-; (def testTransform (segmentToSegmentTransformMatrix testSeg1 testSeg2))
-
-; (println "s2sTransformMatrix" (segmentToSegmentTransformMatrix testSeg1 testSeg2))
-; (println "testTransPoint" (applyMatrixToPoint testTransform [1 1]))
-
-(println "segFromCurve" (segmentsFromCurve testCurve))
-
 (defn curveOntoSegment
     "transforms a curve so its endpoints fit to a segment"
     [ curve segment ]
     (let [curveSeg [(first curve) (last curve)]
           transMatrix (segmentToSegmentTransformMatrix curveSeg segment)]
-        (println curveSeg "transMatrix" transMatrix)
         (map #(applyMatrixToPoint transMatrix %) curve)))
 
-(println "testCurveOnSeg" (curveOntoSegment testCurve [[0 0] [0 4]]))
-(println "testCurveOnSeg" (curveOntoSegment testCurve [[1 1] [2 2]]))
-(println "testCurveOnSeg" (curveOntoSegment testCurve [[0 0] [0 (- 0 4)]]))
 
 
 (defn nextFractal
@@ -188,11 +156,7 @@
           fractals (map #(curveOntoSegment level1curve %) segments)
           headlessFractals (map rest fractals)
           restPoints (reduce concat headlessFractals)]
-          (println "fractals" fractals)
-          (println "headlesss fractals" headlessFractals)
           (cons firstPoint restPoints)))
-
-(println "nextFractal" (nextFractal testCurve testCurve))
 
 (defn fractalizeMe
   [curve level]
@@ -202,5 +166,3 @@
         curve
         (recur (nextFractal curve originalCurve) (- level 1))))))
 
-
-(println "fractalizeMe" (fractalizeMe testCurve 2))
