@@ -1,9 +1,7 @@
 pom.xml
-*.js
 *jar
 /lib/
 /classes/
-/out/
 /target/
 .lein-deps-sum
 .lein-repl-history
