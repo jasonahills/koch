@@ -4,7 +4,8 @@
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [put! chan <!]]
             [clojure.data :as data]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [koch.algorithm.core :as alg]))
 
 (enable-console-print!)
 
