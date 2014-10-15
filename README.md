@@ -16,4 +16,6 @@ Live Demo
 ---------
 [Click here for a demo](http://argonauthills.github.io/koch/)
 
-![Demo](http://i.imgur.com/XO7GCA2.png)
+<a href="http://argonauthills.github.io/koch/">
+<img src="http://i.imgur.com/XO7GCA2.png">
+</a>
