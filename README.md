@@ -14,8 +14,8 @@ It uses [ClojureScript](https://github.com/clojure/clojurescript) with [Om](http
 
 Live Demo
 ---------
-[Click here for a demo](http://argonauthills.github.io/koch/)
+[Click here for a demo](http://jasonahills.github.io/koch/)
 
-<a href="http://argonauthills.github.io/koch/">
+<a href="http://jasonahills.github.io/koch/">
 <img src="http://i.imgur.com/XO7GCA2.png">
 </a>
